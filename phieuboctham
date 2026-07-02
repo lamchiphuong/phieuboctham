@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phiếu Bốc Thăm May Mắn</title>
+<style>
+  :root{
+    --bg: #f5f5f7;
+    --card: #ffffff;
+    --ink: #1d1d1f;
+    --ink-soft: #6e6e73;
+    --line: #d2d2d7;
+    --blue: #0071e3;
+    --blue-deep: #0058b0;
+    --gold: #c9971c;
+    --gold-soft: #f7ecd0;
+    --error: #d70015;
+    --radius: 18px;
+    --shadow: 0 20px 45px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .stage {
+    width: 100%;
+    max-width: 440px;
+  }
+
+  /* ---------- Ticket ---------- */
+  .ticket {
+    position: relative;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    animation: rise 0.6s cubic-bezier(.22,1,.36,1);
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .ticket-head {
+    position: relative;
+    padding: 34px 28px 26px;
+    background: linear-gradient(135deg, #0a84ff 0%, #0058b0 100%);
+    color: #fff;
+    text-align: center;
+  }
+
+  .ticket-head::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 22px;
+    background:
+      radial-gradient(circle at 12px 0, transparent 11px, var(--card) 11.5px) top left,
+      radial-gradient(circle at 12px 0, transparent 11px, var(--card) 11.5px) top right;
+    background-size: 24px 22px;
+    background-repeat: repeat-x;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin: 0 0 6px;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .ticket-body {
+    padding: 30px 28px 28px;
+  }
+
+  /* ---------- Form ---------- */
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 7px;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 13px 14px;
+    font-size: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fbfbfd;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    font-family: inherit;
+    -webkit-appearance: none;
+  }
+
+  .field input:focus {
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(0,113,227,0.12);
+  }
+
+  .field input.invalid {
+    border-color: var(--error);
+  }
+
+  .field .err {
+    display: none;
+    font-size: 12.5px;
+    color: var(--error);
+    margin-top: 6px;
+  }
+
+  .field.has-error .err { display: block; }
+  .field.has-error input { border-color: var(--error); }
+
+  .btn {
+    width: 100%;
+    padding: 15px 18px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.12s ease, opacity 0.18s, background 0.18s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+    margin-top: 6px;
+  }
+
+  .btn-primary:hover { background: var(--blue-deep); }
+
+  .btn-primary:disabled {
+    background: #a9c9ec;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--blue);
+    margin-top: 10px;
+    padding: 12px 18px;
+  }
+
+  .btn-secondary:hover { background: rgba(0,113,227,0.08); }
+
+  /* ---------- Review ---------- */
+  .review-list {
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .review-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .review-list .k {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .review-list .v {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    text-align: right;
+    word-break: break-word;
+  }
+
+  .review-note {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--gold-soft);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+  }
+
+  .review-note .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .review-note p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #8a6a12;
+  }
+
+  /* ---------- Success ---------- */
+  .success-wrap {
+    text-align: center;
+    padding: 8px 4px 4px;
+  }
+
+  .success-icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #34c759, #248a3d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px auto 20px;
+    animation: pop 0.5s cubic-bezier(.22,1.5,.36,1);
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .success-icon svg { width: 30px; height: 30px; }
+
+  .success-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+
+  .success-sub {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0 0 26px;
+  }
+
+  .stub {
+    background: #fbfbfd;
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-align: left;
+    margin-bottom: 24px;
+  }
+
+  .stub .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    padding: 5px 0;
+  }
+
+  .stub .row .k { color: var(--ink-soft); }
+  .stub .row .v { font-weight: 600; }
+
+  .stub .num {
+    text-align: center;
+    padding-top: 6px;
+    margin-top: 6px;
+    border-top: 1px dashed var(--line);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  .stub .num span {
+    display: block;
+    font-size: 20px;
+    letter-spacing: 0.12em;
+    color: var(--blue);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* ---------- Progress dots ---------- */
+  .progress {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 16px 0 0;
+  }
+
+  .progress span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--line);
+    transition: background 0.25s, transform 0.25s;
+  }
+
+  .progress span.active {
+    background: var(--blue);
+    transform: scale(1.3);
+  }
+
+  .footer-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 16px;
+  }
+
+  .step { display: none; }
+  .step.active { display: block; animation: fade 0.35s ease; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: -3px;
+    margin-right: 8px;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .banner-error {
+    display: none;
+    background: #fdecec;
+    color: var(--error);
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="ticket">
+    <div class="ticket-head">
+      <p class="eyebrow">Chương trình quay số</p>
+      <h1 class="title">PHIẾU BỐC THĂM<br>MAY MẮN</h1>
+    </div>
+
+    <div class="ticket-body">
+
+      <!-- Step 1: Form -->
+      <div class="step active" id="step-form">
+        <div class="banner-error" id="form-banner"></div>
+
+        <div class="field" id="f-hoten">
+          <label for="hoten">Họ và tên</label>
+          <input type="text" id="hoten" placeholder="Nguyễn Văn A" autocomplete="name">
+          <div class="err">Vui lòng nhập họ và tên.</div>
+        </div>
+
+        <div class="field" id="f-lop">
+          <label for="lop">Lớp</label>
+          <input type="text" id="lop" placeholder="VD: 10A1" autocomplete="off">
+          <div class="err">Vui lòng nhập lớp.</div>
+        </div>
+
+        <div class="field" id="f-sdt">
+          <label for="sdt">Số điện thoại</label>
+          <input type="tel" id="sdt" placeholder="09xxxxxxxx" autocomplete="tel" inputmode="numeric">
+          <div class="err">Số điện thoại không hợp lệ.</div>
+        </div>
+
+        <button class="btn btn-primary" id="btn-review">Tiếp tục</button>
+      </div>
+
+      <!-- Step 2: Review -->
+      <div class="step" id="step-review">
+        <ul class="review-list">
+          <li><span class="k">Họ và tên</span><span class="v" id="rv-hoten">—</span></li>
+          <li><span class="k">Lớp</span><span class="v" id="rv-lop">—</span></li>
+          <li><span class="k">Số điện thoại</span><span class="v" id="rv-sdt">—</span></li>
+        </ul>
+
+        <div class="review-note">
+          <span class="dot"></span>
+          <p>Vui lòng kiểm tra kỹ thông tin trước khi xác nhận. Thông tin sẽ được dùng để liên hệ khi trúng thưởng.</p>
+        </div>
+
+        <div class="banner-error" id="review-banner"></div>
+
+        <button class="btn btn-primary" id="btn-confirm">
+          <span id="confirm-label">Xác nhận gửi phiếu</span>
+        </button>
+        <button class="btn btn-secondary" id="btn-back">Quay lại chỉnh sửa</button>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div class="step" id="step-success">
+        <div class="success-wrap">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5L10 17.5L19 7.5" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h2 class="success-title">Đã gửi phiếu thành công!</h2>
+          <p class="success-sub">Cảm ơn bạn đã tham gia chương trình. Hãy chờ kết quả quay số nhé.</p>
+
+          <div class="stub">
+            <div class="row"><span class="k">Họ và tên</span><span class="v" id="su-hoten">—</span></div>
+            <div class="row"><span class="k">Lớp</span><span class="v" id="su-lop">—</span></div>
+            <div class="row"><span class="k">Số điện thoại</span><span class="v" id="su-sdt">—</span></div>
+            <div class="num">Mã phiếu<span id="su-code">—</span></div>
+          </div>
+
+          <button class="btn btn-primary" id="btn-again">Gửi phiếu khác</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="progress" id="progress">
+    <span class="active" data-i="0"></span>
+    <span data-i="1"></span>
+    <span data-i="2"></span>
+  </div>
+  <p class="footer-hint">Thông tin của bạn được bảo mật và chỉ dùng cho chương trình bốc thăm.</p>
+</div>
+
+<script>
+  const FIREBASE_URL = "https://quaysomayman-be666-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  const steps = ["step-form", "step-review", "step-success"];
+  const dots = document.querySelectorAll("#progress span");
+
+  function showStep(i) {
+    steps.forEach((id, idx) => {
+      document.getElementById(id).classList.toggle("active", idx === i);
+    });
+    dots.forEach((d, idx) => d.classList.toggle("active", idx === i));
+  }
+
+  const hoten = document.getElementById("hoten");
+  const lop = document.getElementById("lop");
+  const sdt = document.getElementById("sdt");
+
+  function setFieldError(fieldId, isError) {
+    document.getElementById(fieldId).classList.toggle("has-error", isError);
+  }
+
+  function validate() {
+    let ok = true;
+    const nameVal = hoten.value.trim();
+    const lopVal = lop.value.trim();
+    const sdtVal = sdt.value.trim();
+
+    if (nameVal.length < 2) { setFieldError("f-hoten", true); ok = false; }
+    else setFieldError("f-hoten", false);
+
+    if (lopVal.length < 1) { setFieldError("f-lop", true); ok = false; }
+    else setFieldError("f-lop", false);
+
+    const phoneClean = sdtVal.replace(/[\s.\-]/g, "");
+    const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
+    if (!phoneRegex.test(phoneClean)) { setFieldError("f-sdt", true); ok = false; }
+    else setFieldError("f-sdt", false);
+
+    return ok;
+  }
+
+  document.getElementById("btn-review").addEventListener("click", () => {
+    if (!validate()) return;
+
+    document.getElementById("rv-hoten").textContent = hoten.value.trim();
+    document.getElementById("rv-lop").textContent = lop.value.trim();
+    document.getElementById("rv-sdt").textContent = sdt.value.trim();
+
+    showStep(1);
+  });
+
+  document.getElementById("btn-back").addEventListener("click", () => {
+    showStep(0);
+  });
+
+  const btnConfirm = document.getElementById("btn-confirm");
+  const confirmLabel = document.getElementById("confirm-label");
+  const reviewBanner = document.getElementById("review-banner");
+
+  document.getElementById("btn-confirm").addEventListener("click", async () => {
+    btnConfirm.disabled = true;
+    confirmLabel.innerHTML = '<span class="spinner"></span>Đang gửi...';
+    reviewBanner.style.display = "none";
+
+    const payload = {
+      hoTen: hoten.value.trim(),
+      lop: lop.value.trim(),
+      soDienThoai: sdt.value.trim(),
+      thoiGianGui: new Date().toISOString()
+    };
+
+    try {
+      const res = await fetch(`${FIREBASE_URL}/phieuBocTham.json`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error("Gửi thất bại");
+
+      const data = await res.json();
+      const code = (data && data.name) ? data.name.slice(-6).toUpperCase() : "------";
+
+      document.getElementById("su-hoten").textContent = payload.hoTen;
+      document.getElementById("su-lop").textContent = payload.lop;
+      document.getElementById("su-sdt").textContent = payload.soDienThoai;
+      document.getElementById("su-code").textContent = code;
+
+      showStep(2);
+    } catch (err) {
+      reviewBanner.textContent = "Không thể gửi phiếu lúc này. Vui lòng kiểm tra kết nối mạng và thử lại.";
+      reviewBanner.style.display = "block";
+    } finally {
+      btnConfirm.disabled = false;
+      confirmLabel.textContent = "Xác nhận gửi phiếu";
+    }
+  });
+
+  document.getElementById("btn-again").addEventListener("click", () => {
+    hoten.value = "";
+    lop.value = "";
+    sdt.value = "";
+    setFieldError("f-hoten", false);
+    setFieldError("f-lop", false);
+    setFieldError("f-sdt", false);
+    showStep(0);
+  });
+
+  [hoten, lop, sdt].forEach(inp => {
+    inp.addEventListener("input", () => {
+      const fieldId = "f-" + inp.id;
+      document.getElementById(fieldId).classList.remove("has-error");
+    });
+  });
+</script>
+
+</body>
+</html>
