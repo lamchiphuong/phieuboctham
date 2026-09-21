@@ -6,7 +6,6 @@
 <title>Phiếu Bốc Thăm May Mắn</title>
 <style>
   :root{
-    --bg: #f5f5f7;
     --card: #ffffff;
     --ink: #1d1d1f;
     --ink-soft: #6e6e73;
@@ -30,8 +29,8 @@
     min-height: 100vh;
   }
 
-  /* Màu nền dự phòng (hiện ra sau lớp ảnh mờ) */
-  html { background: var(--bg); }
+  /* Bỏ nền mặc định: chỉ dùng ảnh nền (phía sau ảnh là nền trắng để ảnh mờ 50%) */
+  html { background: #fff; }
   body { background: transparent; }
 
   /* Ảnh nền background.png — độ mờ 50% */
@@ -422,7 +421,7 @@
         </div>
 
         <div class="field" id="f-sdt">
-          <label for="sdt">Số điện thoại</label>
+          <label for="sdt">Số điện thoại <span style="font-weight:400;opacity:.8">(không bắt buộc)</span></label>
           <input type="tel" id="sdt" placeholder="09xxxxxxxx" autocomplete="tel" inputmode="numeric">
           <div class="err">Số điện thoại không hợp lệ.</div>
         </div>
@@ -440,7 +439,7 @@
 
         <div class="review-note">
           <span class="dot"></span>
-          <p>Vui lòng kiểm tra kỹ thông tin trước khi xác nhận. Thông tin sẽ được dùng để liên hệ khi trúng thưởng.</p>
+          <p>Vui lòng kiểm tra kỹ thông tin trước khi xác nhận. Thông tin sẽ được dùng để liên hệ khi trúng thưởng (nếu có).</p>
         </div>
 
         <div class="banner-error" id="review-banner"></div>
@@ -515,10 +514,15 @@
     if (lopVal.length < 1) { setFieldError("f-lop", true); ok = false; }
     else setFieldError("f-lop", false);
 
-    const phoneClean = sdtVal.replace(/[\s.\-]/g, "");
-    const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
-    if (!phoneRegex.test(phoneClean)) { setFieldError("f-sdt", true); ok = false; }
-    else setFieldError("f-sdt", false);
+    // Số điện thoại không bắt buộc: chỉ kiểm tra định dạng nếu có nhập
+    if (sdtVal === "") {
+      setFieldError("f-sdt", false);
+    } else {
+      const phoneClean = sdtVal.replace(/[\s.\-]/g, "");
+      const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
+      if (!phoneRegex.test(phoneClean)) { setFieldError("f-sdt", true); ok = false; }
+      else setFieldError("f-sdt", false);
+    }
 
     return ok;
   }
@@ -528,7 +532,7 @@
 
     document.getElementById("rv-hoten").textContent = hoten.value.trim();
     document.getElementById("rv-lop").textContent = lop.value.trim();
-    document.getElementById("rv-sdt").textContent = sdt.value.trim();
+    document.getElementById("rv-sdt").textContent = sdt.value.trim() || "—";
 
     showStep(1);
   });
@@ -567,7 +571,7 @@
 
       document.getElementById("su-hoten").textContent = payload.hoTen;
       document.getElementById("su-lop").textContent = payload.lop;
-      document.getElementById("su-sdt").textContent = payload.soDienThoai;
+      document.getElementById("su-sdt").textContent = payload.soDienThoai || "—";
       document.getElementById("su-code").textContent = code;
 
       showStep(2);
