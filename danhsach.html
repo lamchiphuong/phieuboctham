@@ -256,6 +256,26 @@
 
   .empty p { margin: 0; font-size: 14.5px; }
 
+  /* ---------- Nút đến trang quay số ---------- */
+  .btn-spin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 22px;
+    padding: 12px 28px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(0,113,227,0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn-spin:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,113,227,0.36); }
+  .btn-spin:active { transform: translateY(0); }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.001ms !important; }
   }
@@ -275,6 +295,10 @@
       <span class="count-num" id="count-num">0</span>
       <span class="count-label">phiếu tham gia</span>
     </div>
+    <a class="btn-spin" href="quayso.html">
+      Đến trang quay số
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
   </header>
 
   <div id="empty" class="empty">
