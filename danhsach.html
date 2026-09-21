@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danh Sách Phiếu Bốc Thăm</title>
+<style>
+  :root{
+    --bg-1: #eef4fc;
+    --bg-2: #ffffff;
+    --glass: rgba(255,255,255,0.75);
+    --glass-border: rgba(10,113,227,0.14);
+    --ink: #1d1d1f;
+    --ink-soft: #6e7681;
+    --blue: #0071e3;
+    --blue-deep: #0058b0;
+    --gold: #0071e3;
+    --gold-soft: rgba(0,113,227,0.10);
+    --green: #34c759;
+    --radius: 16px;
+    --shadow: 0 8px 28px rgba(15,60,120,0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+  }
+
+  html {
+    background: var(--bg-2);
+  }
+
+  body {
+    background: transparent;
+    min-height: 100vh;
+  }
+
+  /* Ảnh nền chính, độ trong suốt 40% */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: url("background.png") center / cover no-repeat;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    text-align: center;
+    margin: 0 auto 40px;
+    max-width: 640px;
+    padding: 32px 28px 30px;
+    background: rgba(255,255,255,0.88);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+    backdrop-filter: blur(12px);
+  }
+
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(52,199,89,0.6);
+    animation: pulse 1.8s infinite;
+  }
+
+  .live-badge.offline .live-dot {
+    background: #ff453a;
+    animation: none;
+    box-shadow: none;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(52,199,89,0.55); }
+    70% { box-shadow: 0 0 0 7px rgba(52,199,89,0); }
+    100% { box-shadow: 0 0 0 0 rgba(52,199,89,0); }
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 22px;
+    line-height: 1.15;
+  }
+
+  .count-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .count-num {
+    font-size: clamp(52px, 10vw, 78px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-variant-numeric: tabular-nums;
+    transition: transform 0.25s ease;
+  }
+
+  .count-num.bump { animation: bump 0.4s ease; }
+
+  @keyframes bump {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+
+  .count-label {
+    font-size: 15px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+
+  /* ---------- Grid ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .card {
+    position: relative;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    backdrop-filter: blur(14px);
+    box-shadow: var(--shadow);
+    animation: enter 0.5s cubic-bezier(.22,1,.36,1);
+    overflow: hidden;
+  }
+
+  .card.newest {
+    border-color: rgba(0,113,227,0.45);
+    box-shadow: 0 0 0 1px rgba(0,113,227,0.16), 0 14px 30px rgba(0,113,227,0.12);
+  }
+
+  @keyframes enter {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .card-name {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .card-order {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--bg-1);
+    background: var(--gold);
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+
+  .meta-item {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  .meta-item b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .card-time {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    opacity: 0.7;
+  }
+
+  /* ---------- Empty state ---------- */
+  .empty {
+    text-align: center;
+    padding: 70px 20px;
+    color: var(--ink-soft);
+  }
+
+  .empty-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .empty p { margin: 0; font-size: 14.5px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="live-badge" id="live-badge">
+      <span class="live-dot"></span>
+      <span id="live-text">Đang cập nhật trực tiếp</span>
+    </div>
+    <p class="eyebrow">Chương trình quay số</p>
+    <h1>Danh Sách Phiếu Đã Nhận</h1>
+    <div class="count-row">
+      <span class="count-num" id="count-num">0</span>
+      <span class="count-label">phiếu tham gia</span>
+    </div>
+  </header>
+
+  <div id="empty" class="empty">
+    <div class="empty-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M4 7h16M4 12h16M4 17h10" stroke="#9aa0ac" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p>Chưa có phiếu nào được gửi. Danh sách sẽ tự động cập nhật khi có người tham gia.</p>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+  const FIREBASE_URL = "https://quaysomayman-be666-default-rtdb.asia-southeast1.firebasedatabase.app";
+  const PATH = "phieuBocTham";
+
+  const gridEl = document.getElementById("grid");
+  const emptyEl = document.getElementById("empty");
+  const countEl = document.getElementById("count-num");
+  const liveBadge = document.getElementById("live-badge");
+  const liveText = document.getElementById("live-text");
+
+  let entries = {};
+  let latestKey = null;
+
+  function maskPhone(p) {
+    if (!p) return "—";
+    const digits = p.replace(/\s/g, "");
+    if (digits.length <= 5) return digits;
+    return digits.slice(0, 3) + "•••" + digits.slice(-2);
+  }
+
+  function formatTime(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleString("vi-VN", {
+      hour: "2-digit", minute: "2-digit",
+      day: "2-digit", month: "2-digit"
+    });
+  }
+
+  function render() {
+    const keys = Object.keys(entries).filter(k => entries[k]);
+    countEl.textContent = keys.length;
+    countEl.classList.remove("bump");
+    void countEl.offsetWidth;
+    countEl.classList.add("bump");
+
+    if (keys.length === 0) {
+      emptyEl.style.display = "block";
+      gridEl.innerHTML = "";
+      return;
+    }
+    emptyEl.style.display = "none";
+
+    // Sort newest first, using thoiGianGui when available, otherwise Firebase key order
+    keys.sort((a, b) => {
+      const ta = entries[a].thoiGianGui ? new Date(entries[a].thoiGianGui).getTime() : 0;
+      const tb = entries[b].thoiGianGui ? new Date(entries[b].thoiGianGui).getTime() : 0;
+      if (ta && tb) return tb - ta;
+      return b.localeCompare(a);
+    });
+
+    gridEl.innerHTML = keys.map((k, idx) => {
+      const e = entries[k];
+      const order = keys.length - idx;
+      const isNewest = k === latestKey;
+      return `
+        <div class="card ${isNewest ? "newest" : ""}">
+          <div class="card-top">
+            <div class="card-name">${escapeHtml(e.hoTen || "—")}</div>
+            <div class="card-order">#${order}</div>
+          </div>
+          <div class="card-meta">
+            <span class="meta-item">Lớp <b>${escapeHtml(e.lop || "—")}</b></span>
+            <span class="meta-item">SĐT <b>${maskPhone(e.soDienThoai)}</b></span>
+          </div>
+          <div class="card-time">${formatTime(e.thoiGianGui)}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function setLive(isLive) {
+    liveBadge.classList.toggle("offline", !isLive);
+    liveText.textContent = isLive ? "Đang cập nhật trực tiếp" : "Mất kết nối, đang thử lại...";
+  }
+
+  function connect() {
+    const es = new EventSource(`${FIREBASE_URL}/${PATH}.json`);
+
+    es.addEventListener("put", (e) => {
+      setLive(true);
+      const { path, data } = JSON.parse(e.data);
+      if (path === "/") {
+        entries = data || {};
+        const keys = Object.keys(entries);
+        latestKey = keys.length ? keys[keys.length - 1] : null;
+      } else {
+        const key = path.slice(1);
+        if (data === null) {
+          delete entries[key];
+        } else {
+          entries[key] = data;
+          latestKey = key;
+        }
+      }
+      render();
+    });
+
+    es.addEventListener("patch", (e) => {
+      setLive(true);
+      const { path, data } = JSON.parse(e.data);
+      const key = path.slice(1);
+      if (entries[key]) Object.assign(entries[key], data);
+      render();
+    });
+
+    es.onerror = () => {
+      setLive(false);
+      es.close();
+      setTimeout(connect, 3000);
+    };
+  }
+
+  connect();
+  render();
+</script>
+
+</body>
+</html>
