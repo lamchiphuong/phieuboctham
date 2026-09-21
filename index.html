@@ -25,10 +25,24 @@
   html, body {
     margin: 0;
     padding: 0;
-    background: var(--bg);
     color: var(--ink);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     min-height: 100vh;
+  }
+
+  /* Màu nền dự phòng (hiện ra sau lớp ảnh mờ) */
+  html { background: var(--bg); }
+  body { background: transparent; }
+
+  /* Ảnh nền background.png — độ mờ 50% */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: url("background.png") center / cover no-repeat;
+    opacity: 0.5;
+    pointer-events: none;
   }
 
   body {
